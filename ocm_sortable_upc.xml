@@ -1,0 +1,48 @@
+
+<modification>
+<name>Modification Default</name>
+<version>1.0</version>
+<author>OpenCart Ltd</author>
+<link>http://www.opencart.com</link>
+	<file name="admin/view/template/catalog/product_list.tpl">
+		<operation>
+			<search position="after" offset="1"><![CDATA[
+                <input type="text" name="filter_quantity" value="<?php echo $filter_quantity; ?>" placeholder="<?php echo $entry_quantity; ?>" id="input-quantity" class="form-control" />
+			]]></search>
+			<add><![CDATA[
+               <div class="form-group">
+                <label class="control-label" for="input-upc">UPC</label>
+                <input type="text" name="filter_upc" value="" placeholder="UPC" id="input-upc" class="form-control" />
+              </div>
+            ]]></add>
+		</operation>
+			<operation>
+			<search position="after" offset="1"><![CDATA[
+                var filter_status = $('select[name=\'filter_status\']').val();
+			]]></search>
+			<add><![CDATA[
+
+			//PHP0
+                var filter_upc = $('input[name=\'filter_upc\']').val();
+
+    if (filter_upc) {
+		url += '&filter_upc=' + encodeURIComponent(filter_upc);
+	}
+            ]]></add>
+		</operation>
+	</file>
+
+	<file name="admin/model/catalog/product.php">
+
+		<operation>
+			<search position="after" offset="2"><![CDATA[p.sort_order]]></search>
+			<add><![CDATA[	if (!empty($this->request->get['filter_upc'])) {
+			$sql .= " AND p.upc LIKE '" . $this->request->get['filter_upc'] . "%'";
+		}]]></add>
+		</operation>
+	</file>
+
+
+
+</modification>
+
