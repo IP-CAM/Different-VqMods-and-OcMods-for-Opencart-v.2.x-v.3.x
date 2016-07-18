@@ -334,4 +334,142 @@
 
 
 
+
+
+    <file path="catalog/view/theme/*/template/account/" name="register.tpl">
+        <operation info="// بحث عن عنوان ثاني وازالته">
+            <search position="replace"><![CDATA[
+			<input type="text" name="fax"
+			]]></search>
+            <add><![CDATA[
+			 <input type="text" name="fax"  style="display:none"
+
+
+			]]></add>
+        </operation>
+    </file>
+
+
+    <file path="catalog/view/theme/*/template/account/" name="register.tpl">
+        <operation info="// بحث عن عنوان ثاني وازالته">
+            <search position="replace"><![CDATA[
+
+            <label class="col-sm-2 control-label" for="input-fax"><?php echo $entry_fax; ?></label>
+
+			]]></search>
+            <add><![CDATA[
+
+			]]></add>
+        </operation>
+    </file>
+
+
+
+
+
+
+    <file path="catalog/view/theme/*/template/account/" name="register.tpl">
+        <operation info="// بحث عن عنوان ثاني وازالته">
+            <search position="replace"><![CDATA[
+			<input type="text" name="company"
+			]]></search>
+            <add><![CDATA[
+			 <input type="text" name="company"  style="display:none"
+
+
+			]]></add>
+        </operation>
+    </file>
+
+
+    <file path="catalog/view/theme/*/template/account/" name="register.tpl">
+        <operation info="// بحث عن عنوان ثاني وازالته">
+            <search position="replace"><![CDATA[
+
+            <label class="col-sm-2 control-label" for="input-company"><?php echo $entry_company; ?></label>
+
+			]]></search>
+            <add><![CDATA[
+
+			]]></add>
+        </operation>
+    </file>
+
+
+
+
+
+
+    <file path="catalog/view/theme/*/template/account/" name="register.tpl">
+        <operation info="// بحث عن عنوان ثاني وازالته">
+            <search position="replace"><![CDATA[
+			<input type="text" name="postcode"
+			]]></search>
+            <add><![CDATA[
+			 <input type="text" name="postcode"  style="display:none"
+
+
+			]]></add>
+        </operation>
+    </file>
+
+
+    <file path="catalog/view/theme/*/template/account/" name="register.tpl">
+        <operation info="// بحث عن عنوان ثاني وازالته">
+            <search position="replace"><![CDATA[
+
+            <label class="col-sm-2 control-label" for="input-postcode"><?php echo $entry_postcode; ?></label>
+
+			]]></search>
+            <add><![CDATA[
+
+			]]></add>
+        </operation>
+    </file>
+
+
+
+
+
+
+    <file path="catalog/view/theme/*/template/account/" name="register.tpl">
+        <operation info="// بحث عن عنوان ثاني وازالته">
+            <search position="replace"><![CDATA[
+			<input type="text" name="address_2"
+			]]></search>
+            <add><![CDATA[
+			 <input type="text" name="address_2"  style="display:none"
+
+
+			]]></add>
+        </operation>
+    </file>
+
+
+    <file path="catalog/view/theme/*/template/account/" name="register.tpl">
+        <operation info="// بحث عن عنوان ثاني وازالته">
+            <search position="replace"><![CDATA[
+
+            <label class="col-sm-2 control-label" for="input-address-2"><?php echo $entry_address_2; ?></label>
+
+			]]></search>
+            <add><![CDATA[
+
+			]]></add>
+        </operation>
+    </file>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </modification>
