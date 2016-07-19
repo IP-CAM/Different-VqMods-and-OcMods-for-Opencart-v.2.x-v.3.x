@@ -13,32 +13,30 @@
         <operation info="">
 			<search position="after"><![CDATA[
 
-			    <div class="journal-top-header j-min z-1"></div>
+		<header class="journal-header-center nosecond">
 
 			]]></search>
 			<add><![CDATA[
-
-
+    		<?php if (!isset($_GET['logo'])):  ?>
 			]]></add>
 		</operation>
 	</file>
+
 
 
 <file  name="catalog/view/theme/journal2/template/journal2/headers/center.nosecond.tpl">
         <operation info="">
-			<search position="after"><![CDATA[
+			<search position="before"><![CDATA[
 
-			 <div id="header" class="journal-header row z-2" >
+			</header>
 
 			]]></search>
 			<add><![CDATA[
+    <?php endif; ?>
 
-    <div id="header" class="journal-header row z-2" style="display: none">
 			]]></add>
 		</operation>
 	</file>
-
-
 
 
 
