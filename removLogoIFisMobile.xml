@@ -9,33 +9,36 @@
 
 
 
-	<file path="catalog/view/theme/journal2/template/journal2/headers/" name="center.nocurr.tpl">
+	<file  name="catalog/view/theme/journal2/template/journal2/headers/center.nosecond.tpl">
         <operation info="">
 			<search position="after"><![CDATA[
 
-			<header class="journal-header-center nocurr">
+			    <div class="journal-top-header j-min z-1"></div>
+
 			]]></search>
 			<add><![CDATA[
- 			<?php if (!Journal2Cache::$mobile_detect->isMobile()): ?>
+
+
 			]]></add>
 		</operation>
 	</file>
 
 
-
-<file path="catalog/view/theme/journal2/template/journal2/headers/" name="center.nocurr.tpl">
+<file  name="catalog/view/theme/journal2/template/journal2/headers/center.nosecond.tpl">
         <operation info="">
-			<search position="before"><![CDATA[
+			<search position="after"><![CDATA[
 
-			</header>
+			 <div id="header" class="journal-header row z-2" >
 
 			]]></search>
 			<add><![CDATA[
-    <?php endif; ?>
 
+    <div id="header" class="journal-header row z-2" style="display: none">
 			]]></add>
 		</operation>
 	</file>
+
+
 
 
 
