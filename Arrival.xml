@@ -1,0 +1,153 @@
+<modification>
+
+    <id><![CDATA[isArrival]]></id>
+    <version><![CDATA[1.0.0]]></version>
+    <author><![CDATA[php0@hotmail.com]]></author>
+    <vqmver><![CDATA[2.5.1]]></vqmver>
+
+
+
+
+    <file name="catalog/model/account/order.php">
+        <!--
+        The search pattern is a portion of the line of code.
+        This is to be friendly with an other module (Delete Order History v2 by The Krotek) which
+        modify the begining of the line and thus would break powertrack here.
+         -->
+        <operation>
+
+            <search position="after"><![CDATA['date_added'              => $order_query->row['date_added'],]]></search>
+
+            <add><![CDATA[
+            'isArrival'              => $order_query->row['isArrival'],
+            'isRemove'                 => $order_query->row['isRemove'],
+            ]]></add>
+
+        </operation>
+
+
+         <operation>
+
+            <search position="replace"><![CDATA[$query = $this->db->query("SELECT o.order_id, o.firstname,]]></search>
+
+            <add><![CDATA[
+            $query = $this->db->query("SELECT o.order_id, o.firstname,o.isArrival,o.isRemove,
+            ]]></add>
+
+        </operation>
+    </file>
+
+
+
+    <file name="catalog/controller/rest/order.php">
+
+        <operation>
+            <search position="after"><![CDATA['order_id' => $result['order_id'],]]></search>
+
+            <add><![CDATA[
+                'isArrival'         => $result['isArrival'],
+                'isRemove'            => $result['isRemove'],
+            ]]></add>
+
+
+
+        </operation>
+
+        <operation>
+
+       <search position="before"><![CDATA[    public function listOrders()]]></search>
+
+
+            <add><![CDATA[
+
+//PHP0
+
+    public function isArrival() {
+
+        $json = array('success' => true);
+
+        if (!$this->customer->isLogged()) {
+            $this->json['error'][] = "User is not logged in";
+            $this->json["success"] = false;
+        }
+
+        $this->language->load('account/order');
+
+        $this->load->model('account/order');
+
+
+        if($this->json["success"]){
+            /*reorder*/
+            if (isset($this->request->get['id'])) {
+
+                $order_id = $this->request->get['id'];
+
+                $query = $this->db->query("UPDATE  `" . DB_PREFIX . "order` SET `isArrival` = '1' WHERE order_id = '" . (int)$order_id . "'");
+
+                if(!$this->db->countAffected()){
+                    $this->json["success"]     = false;
+                    $this->json['error'][]       = "Error Update order " . $order_id;
+                }
+
+
+
+
+            }
+            else {
+                $this->json["success"]     = false;
+                $this->json['error'][]       = "Missing Number order" . $order_id;
+            }
+        }
+
+
+
+        $this->sendResponse($json);
+    }
+
+
+// Hide Order
+    public function isRemove() {
+
+        $json = array('success' => true);
+
+        if (!$this->customer->isLogged()) {
+           $this->json['error'][] = "User is not logged in";
+           $this->json["success"] = false;
+        }
+
+        $this->language->load('account/order');
+
+        $this->load->model('account/order');
+
+
+        if($this->json["success"]){
+            /*reorder*/
+            if (isset($this->request->get['id'])) {
+
+                $order_id = $this->request->get['id'];
+
+                $query = $this->db->query("UPDATE  `" . DB_PREFIX . "order` SET `isRemove` = '1' WHERE order_id = '" . (int)$order_id . "'");
+
+                if(!$this->db->countAffected()){
+                    $this->json["success"]      = false;
+                    $this->json['error'][]       = "Error Hide order  Or Order Is Hiddein " . $order_id;
+                }
+
+            }
+            else {
+                $this->json["success"]      = false;
+                $this->json['error'][]       = "Missing Number order" . $order_id;
+            }
+        }
+
+
+
+        $this->sendResponse($json);
+    }
+
+            ]]></add>
+
+        </operation>
+    </file>
+
+</modification>
