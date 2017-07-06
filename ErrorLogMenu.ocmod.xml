@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+    <name>ErrorLogMenu</name>
+    <code>ErrorLogMenu</code>
+    <version>1.0.0.1</version>
+    <author>PHP0</author>
+    <link>http://4Techs.net</link>
+
+    <file path="admin/language/*/common/column_left.php">
+        <operation>
+            <search index="0"><![CDATA[<?php]]></search>
+            <add position="after"><![CDATA[$_['text_error_log'] = 'Error Log Menu';]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/controller/common/column_left.php">
+        <operation>
+            <search index="0"><![CDATA[if ($this->user->hasPermission('access', 'extension/event')) {]]></search>
+            <add position="after"><![CDATA[       if ($this->user->hasPermission('access', 'extension/event')) {
+				$extension[] = array(
+					'name'	   => $this->language->get('text_error_log'),
+					'href'     => $this->url->link('extension/module/errorlogmanager', 'token=' . $this->session->data['token'], true),
+					'children' => array()
+				);
+			}   ]]></add>
+
+        </operation>
+    </file>
+
+</modification>
