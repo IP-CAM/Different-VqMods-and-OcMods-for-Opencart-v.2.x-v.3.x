@@ -1,0 +1,29 @@
+<modification>
+
+    <id><![CDATA[addPowerTrack]]></id>
+    <version><![CDATA[1.0.0]]></version>
+    <author><![CDATA[php0@hotmail.com]]></author>
+    <vqmver><![CDATA[2.5.1]]></vqmver>
+
+
+
+
+    <file name="catalog/controller/rest/order.php">
+        <!--
+        اضافة البور تراك لمتابعه الطلب
+         -->
+        <operation>
+
+            <search position="before"><![CDATA['comment' => nl2br($result['comment'])]]></search>
+
+            <add><![CDATA[
+            'powertrack_trackcode'   => $result['powertrack_trackcode'],
+            'powertrack_carrier'     => $result['powertrack_carrier'],
+            ]]></add>
+
+        </operation>
+    </file>
+
+
+
+</modification>
