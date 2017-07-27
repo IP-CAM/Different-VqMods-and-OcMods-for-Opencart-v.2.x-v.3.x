@@ -2,7 +2,7 @@
 <modification>
 	<name>compatble</name>
 	<code>compatble</code>
-	<id>compatble</id>
+	<id>Show Weight</id>
 	<version>1.0.0</version>
 	<vqmver>2.5.1</vqmver>
 	<author>Basheir Hassan</author>
@@ -28,7 +28,7 @@ $( document ).ready(function() {
 
 
 var imp=$.map( listCompatbleDevices, function( n ) {
-  return "<ul class='product-grid-item xs-50 sm-33 md-100 lg-50 xl-33 heading-title' style='text-align: right;'>"+n+"</ul>";
+  return "<ul class='product-grid-item xs-50 sm-33 md-100 lg-50 xl-33 heading-title' style='text-align: right;'><img src='image/icons/comptable-25.png' title='listCompatbleDevices'>"+n+"</ul>";
 });
 
 $("#column-left .box-product").html(imp);
@@ -253,6 +253,11 @@ $("#column-left .box-heading").html("متوافق مع اجهزة");
 		<operation>
 			<search><![CDATA[if (isset($this->request->post['points'])) {]]></search>
 			<add position="before"><![CDATA[
+
+
+if(!isset($this->request->get['product_id'])){
+$this->request->get['product_id']= 0;
+}
 
 
 			$data['product_compatble_field'] = $this->model_catalog_product->getProductCompatble($this->request->get['product_id']);
