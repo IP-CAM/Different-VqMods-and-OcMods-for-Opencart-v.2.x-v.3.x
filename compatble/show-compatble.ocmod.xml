@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <modification>
-	<name>compatble</name>
-	<code>compatble</code>
-	<id>Show Weight</id>
-	<version>1.0.0</version>
-	<vqmver>2.5.1</vqmver>
-	<author>Basheir Hassan</author>
+    <name>compatble</name>
+    <code>compatble</code>
+    <id>Show Weight</id>
+    <version>1.2.0</version>
+    <vqmver>2.5.1</vqmver>
+    <author>Basheir Hassan</author>
 
-	<file path="catalog/view/theme/*/template/product/product.tpl">
-		<operation>
-			<search ><![CDATA[
+    <file path="catalog/view/theme/*/template/product/product.tpl">
+        <operation>
+            <search><![CDATA[
            			<?php echo $footer; ?>
 				]]></search>
-			<add position="before"><![CDATA[
+            <add position="before"><![CDATA[
  <?php  if($compDatas!=null){ ?>
 
 <script type="application/javascript">
@@ -47,17 +47,17 @@ $("#column-left .box-heading").html("متوافق مع اجهزة");
 
 
 				]]></add>
-		</operation>
-	</file>
+        </operation>
+    </file>
 
 
-	<file path="catalog/controller/product/product.php">
+    <file path="catalog/controller/product/product.php">
 
-		<operation>
-			<search ><![CDATA[
+        <operation>
+            <search><![CDATA[
               			$data['points'] = $product_info['points'];
 				]]></search>
-			<add position="after"><![CDATA[
+            <add position="after"><![CDATA[
 			$compDatas = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_compatible comp WHERE (comp.product_id = " . $product_info['product_id'] . ")");
 
 		if(count($compDatas->rows)>0){
@@ -78,28 +78,21 @@ $("#column-left .box-heading").html("متوافق مع اجهزة");
 		}
 
 				]]></add>
-		</operation>
+        </operation>
 
 
-	</file>
+    </file>
 
 
-
-
-
-
-
-
-
-
-	<file path="admin/view/template/catalog/product_form.tpl">
-		<operation>
-			<search><![CDATA[<li><a href="#tab-design" data-toggle="tab"><?php echo $tab_design; ?></a></li>]]></search>
-			<add position="after"><![CDATA[<li><a href="#tab-compatble" data-toggle="tab">متوافق مع الاجهزة</a></li>]]></add>
-		</operation>
-		<operation>
-			<search><![CDATA[<div class="tab-pane" id="tab-design">]]></search>
-			<add position="before"><![CDATA[
+    <file path="admin/view/template/catalog/product_form.tpl">
+        <operation>
+            <search><![CDATA[<li><a href="#tab-design" data-toggle="tab"><?php echo $tab_design; ?></a></li>]]></search>
+            <add position="after">
+                <![CDATA[<li><a href="#tab-compatble" data-toggle="tab">متوافق مع الاجهزة</a></li>]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[<div class="tab-pane" id="tab-design">]]></search>
+            <add position="before"><![CDATA[
 			<div class="tab-pane" id="tab-compatble">
 
 			<div class="input-group">
@@ -128,14 +121,12 @@ $("#column-left .box-heading").html("متوافق مع اجهزة");
                   </div>
 
 			]]></add>
-		</operation>
+        </operation>
 
 
-
-
-		<operation>
-			<search><![CDATA[$('input[name=\'related\']').autocomplete({]]></search>
-			<add position="before"><![CDATA[
+        <operation>
+            <search><![CDATA[$('input[name=\'related\']').autocomplete({]]></search>
+            <add position="before"><![CDATA[
 		     // autocompleteCompatble
       $('input[name=\'compatble\']').autocomplete({
           'source': function(request, response) {
@@ -189,27 +180,24 @@ $("#column-left .box-heading").html("متوافق مع اجهزة");
 
 
 			]]></add>
-		</operation>
+        </operation>
 
 
-	</file>
+    </file>
 
 
+    <file path="admin/controller/catalog/product.php">
+        <operation>
+            <search><![CDATA[$data['tab_design'] = $this->language->get('tab_design');]]></search>
+            <add position="after"><![CDATA[$data['tab_shipping'] = $this->language->get('tab_shipping');]]></add>
+        </operation>
 
 
-
-	<file path="admin/controller/catalog/product.php">
-		<operation>
-			<search><![CDATA[$data['tab_design'] = $this->language->get('tab_design');]]></search>
-			<add position="after"><![CDATA[$data['tab_shipping'] = $this->language->get('tab_shipping');]]></add>
-		</operation>
-
-
-		<operation>
-			<search ><![CDATA[
+        <operation>
+            <search><![CDATA[
               				protected function validateForm() {
 				]]></search>
-			<add position="before"><![CDATA[
+            <add position="before"><![CDATA[
 
 //Compatble
 
@@ -247,12 +235,12 @@ $("#column-left .box-heading").html("متوافق مع اجهزة");
     }
 
 				]]></add>
-		</operation>
+        </operation>
 
 
-		<operation>
-			<search><![CDATA[if (isset($this->request->post['points'])) {]]></search>
-			<add position="before"><![CDATA[
+        <operation>
+            <search><![CDATA[if (isset($this->request->post['points'])) {]]></search>
+            <add position="before"><![CDATA[
 
 
 if(!isset($this->request->get['product_id'])){
@@ -264,28 +252,20 @@ $this->request->get['product_id']= 0;
 			//print_r($data['product_compatble_field']);
 
 ]]></add>
-		</operation>
+        </operation>
 
 
+    </file>
 
 
+    <file path="admin/model/catalog/product.php">
 
 
-
-	</file>
-
-
-
-
-	<file path="admin/model/catalog/product.php">
-
-
-
-		<operation>
-			<search ><![CDATA[
+        <operation>
+            <search><![CDATA[
               				if ($data['keyword']) {
 				]]></search>
-			<add position="before"><![CDATA[
+            <add position="before"><![CDATA[
 
   		if ($data['product_compatble']) {
 
@@ -302,13 +282,12 @@ $this->request->get['product_id']= 0;
         }
 
 				]]></add>
-		</operation>
+        </operation>
 
 
-
-		<operation>
-			<search><![CDATA[public function getProductOptions($product_id) {]]></search>
-			<add position="before"><![CDATA[public function getProductCompatble($product_id) {
+        <operation>
+            <search><![CDATA[public function getProductOptions($product_id) {]]></search>
+            <add position="before"><![CDATA[public function getProductCompatble($product_id) {
 			      $compDatas = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_compatible comp WHERE (comp.product_id = " . $product_id . ")");
 
 		if(count($compDatas->rows)>0){
@@ -325,11 +304,62 @@ $this->request->get['product_id']= 0;
 
         return null;
 				}]]></add>
-		</operation>
+        </operation>
+
+
+    </file>
+
+
+    <file path="catalog/model/catalog/product.php">
 
 
 
-	</file>
+        <!--
+  اضافة متوافق مع  لعرضها في البرودكت
+     -->
+
+        <operation>
+            <search><![CDATA[public function getTotalProductSpecials() {]]></search>
+            <add position="before"><![CDATA[
+	public function getProductCompatible($product_id) {
+
+        $compDatas = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_compatible comp WHERE (comp.product_id = " . $product_id . ")");
+
+        if(count($compDatas->rows)>0){
+            $AllIDs = json_decode($compDatas->row['id_devices'],true);
+
+            $IntArray = array_map('intval', $AllIDs);
+            $AllIDsImplod = implode(",", $IntArray);
+            $IDDevices = $this->db->query("SELECT deviceName FROM " . DB_PREFIX . "product_compatible_devices comp WHERE (comp.id_devices IN (" . $AllIDsImplod . "))");
+
+            return $IDDevices->rows;
+        }
+
+        return null;
+
+	}
+
+	]]></add>
+        </operation>
+
+
+    </file>
+
+
+    <file path="catalog/controller/feed/rest_api.php">
+
+
+        <operation>
+            <search><![CDATA[ 'rating' => (int)$product['rating'],]]></search>
+            <add position="before"><![CDATA[
+
+			'compatble' => $this->model_catalog_product->getProductCompatible($product['product_id']),
+
+		]]></add>
+        </operation>
+
+
+    </file>
 
 
 </modification>
