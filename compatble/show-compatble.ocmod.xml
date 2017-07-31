@@ -323,7 +323,7 @@ $this->request->get['product_id']= 0;
             <add position="before"><![CDATA[
 	public function getProductCompatible($product_id) {
 
-        $compDatas = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_compatible comp WHERE (comp.product_id = " . $product_id . ")");
+        $compDatas = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_compatible comp WHERE (comp.product_id = " . (int)$product_id . ")");
 
         if(count($compDatas->rows)>0){
             $AllIDs = json_decode($compDatas->row['id_devices'],true);
