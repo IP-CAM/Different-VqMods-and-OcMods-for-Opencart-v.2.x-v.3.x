@@ -1,0 +1,159 @@
+<modification>
+
+    <id><![CDATA[setPlayerID]]></id>
+    <version><![CDATA[1.0.0]]></version>
+    <author><![CDATA[php0@hotmail.com]]></author>
+    <vqmver><![CDATA[2.5.1]]></vqmver>
+
+
+
+
+
+
+
+    <file name="catalog/controller/rest/order.php">
+
+        <operation>
+
+       <search position="before"><![CDATA[    public function listOrders()]]></search>
+
+
+            <add><![CDATA[
+
+
+
+
+//PHP0
+
+    public function setPlayerID() {
+
+
+    $json = array('success' => true);
+
+
+        $this->language->load('account/order');
+
+        $this->load->model('account/order');
+
+        $post = json_decode(file_get_contents('php://input'), true);
+
+
+
+            if (isset($post['playerID']) && isset($post["orderID"])) {
+
+                $playerID = $post['playerID'];
+                $orderID =  $post['orderID'];
+
+
+
+                $query = $this->db->query("UPDATE  `" . DB_PREFIX . "order` SET  playerID = '" . $post["playerID"] . "' WHERE order_id = '" . (int)$orderID . "'");
+
+
+
+                if(!$this->db->countAffected()){
+                    $this->json["success"]     = true;
+                    $this->json['error'][]       = "Error  setPlayerID " . $playerID;
+                }
+
+
+
+
+            }
+            else {
+                $this->json["success"]     = true;
+                $this->json['error'][]       = "Missing  Order ID Or Player ID";
+            }
+
+
+        $this->sendResponse($json);
+    }
+
+
+            ]]></add>
+
+        </operation>
+    </file>
+
+
+    <file name="admin/view/template/sale/order_info.tpl">
+        <!--
+        The search pattern is a portion of the line of code.
+        This is to be friendly with an other module (Delete Order History v2 by The Krotek) which
+        modify the begining of the line and thus would break powertrack here.
+         -->
+        <operation>
+
+            <search position="before" index="1"><![CDATA[<select name="order_status_id" id="input-order-status" class="form-control">]]></search>
+
+            <add><![CDATA[
+
+
+        <div class="form-group">
+        <a href="javascript:$.post( './oneSignal/send.php',{message:$('#input-order-status option:selected').text(), playerID: $('#playerID').val() }).done(function( data ) { alert( data );});" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="ارسال تنبيه"><i class="fa fa-pencil"></i></a>
+                  <div class="col-sm-10">
+        <input id="playerID" type="text" name="playerID" value="<?php echo $playerID; ?>" class="form-control" placeholder="playerID">
+                  </div>
+                </div>
+
+
+
+            ]]></add>
+
+        </operation>
+
+    </file>
+
+
+
+
+
+
+    <file name="admin/model/sale/order.php">
+        <!--
+        The search pattern is a portion of the line of code.
+        This is to be friendly with an other module (Delete Order History v2 by The Krotek) which
+        modify the begining of the line and thus would break powertrack here.
+         -->
+        <operation>
+
+            <search position="before" index="1"><![CDATA['date_added'              => $order_query->row['date_added'],]]></search>
+
+
+            <add><![CDATA[
+
+           'playerID'                => $order_query->row['playerID'],
+
+            ]]></add>
+
+        </operation>
+
+
+
+    </file>
+
+
+
+
+
+    <file name="admin/controller/sale/order.php">
+
+
+        <operation>
+
+            <search position="after" index="1"><![CDATA[$customer_group_info = $this->model_customer_customer_group->getCustomerGroup($order_info['customer_group_id']);]]></search>
+
+
+            <add><![CDATA[
+
+          $data['playerID'] =  $order_info['playerID'];
+
+            ]]></add>
+
+        </operation>
+
+    </file>
+
+
+
+
+</modification>
