@@ -1,0 +1,218 @@
+<modification>
+
+    <id>Product Discount</id>
+    <version>2.2.0</version>
+    <vqmver>2.1.1</vqmver>
+    <author>PHP0</author>
+
+
+    <file name="admin/view/template/extension/module/advanced_filter/product_list.tpl">
+        <operation>
+            <search position="before" index="1">
+                <![CDATA[<a href="<?php echo $add; ?>" data-toggle="tooltip" title="<?php echo $button_add; ?>" class="btn btn-primary"><i class="fa fa-plus"></i></a>]]></search>
+
+            <add><![CDATA[
+
+         <div class="btn-group">
+          <button type="button" onclick="itemsDisabled();" class="btn btn-warning">Disabled</button>
+          <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="caret"></span>
+            <span class="sr-only">Toggle Dropdown</span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a href="javascript:itemsDisabled();">itemsDisabled</a></li>
+            <li><a href="javascript:itemsEnable();">itemsEnable</a></li>
+          </ul>
+        </div>
+
+			]]></add>
+
+        </operation>
+
+
+
+
+        <operation>
+            <search position="after" index="1"><![CDATA[<script type="text/javascript"><!--]]></search>
+
+            <add><![CDATA[
+
+
+
+
+ var htmls='<form class="form-horizontal" role="form">';
+ htmls+='<div class="form-group">';
+ htmls+='<label class="col-sm-2 control-label" ';
+ htmls+='>تاريخ البدء</label>';
+
+ htmls+=' <div class="col-sm-10">';
+ htmls+='<div class="input-group date"><input type="text" name="dateStart" id="dateStart" value="" placeholder="تاريخ الانتهاء" data-date-format="YYYY-MM-DD" class="form-control"><span class="input-group-btn">';
+ htmls+=' <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button> </span></div>';
+ htmls+='</div>';
+ htmls+='</div>';
+ htmls+='<div class="form-group">';
+ htmls+='<label class="col-sm-2 control-label"';
+ htmls+='>تاريخ الانتهاء</label>';
+ htmls+='<div class="col-sm-10">';
+ htmls+='<div class="input-group date"><input type="text" name="dateEnd" id="dateEnd" value="" placeholder="تاريخ البدء" data-date-format="YYYY-MM-DD" class="form-control"><span class="input-group-btn">';
+ htmls+='<button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button> </span></div>';
+ htmls+='</div>';
+ htmls+='</div>';
+
+ htmls+='<div class="form-group">';
+ htmls+=' <label class="col-sm-2 control-label"';
+ htmls+='>سعر</label>';
+ htmls+='<div class="col-sm-10">';
+ htmls+='<input name="price" class="form-control"';
+ htmls+='id="price" />';
+ htmls+='</div></div></div>';
+
+ htmls+='<div class="form-group">';
+ htmls+=' <label class="col-sm-2 control-label"';
+ htmls+='>بالمائة ٪</label>';
+ htmls+='<div class="col-sm-10">';
+ htmls+='<input name="percent" type="checkbox" value=""  ';
+ htmls+='id="percent" />';
+ htmls+='</div>';
+
+
+ htmls+='</div>';
+ htmls+='</form>';
+
+
+
+
+
+
+function progrs() {
+
+  var obj = $("[name='selected[]']");
+        var len = obj.size();
+        var dialog = bootbox.dialog({
+        title: 'جاري جلب البيانات ...... #' +'<span class="text-danger" >'+len+'</span>',
+        message: '<progress id="countProcc" class="progress progress-striped progress-animated" value="0" max="100" role="progressbar" style="width:90%"></progress><span class="text-success" id="countElm">0</span>'
+
+    });
+
+
+    dialog.css({
+      'top': '50%',
+      'margin-top': function () {
+        return -(dialog.height() / 2);
+      }
+    });
+
+
+}
+
+
+
+
+
+
+
+
+// حذف كافة الخصومات السابقة
+function itemsDisabled() {
+
+    var pircent=$("#percent:checked").is(":checked");
+
+
+
+
+    $("[name='selected[]']:checked").each(function () {
+        $.post("index.php?route=catalog/product/itemsDisabled&token=<?php echo $token; ?>", {
+            id: $(this).val()
+        }).done(function (data) {
+        notie.alert({ type: data.succ, text: data, time: 2 });
+        })
+
+    });
+
+
+}
+
+
+
+// حذف كافة الخصومات السابقة
+function itemsEnable() {
+
+    var pircent=$("#percent:checked").is(":checked");
+
+
+
+
+    $("[name='selected[]']:checked").each(function () {
+        $.post("index.php?route=catalog/product/itemsEnable&token=<?php echo $token; ?>", {
+            id: $(this).val()
+        }).done(function (data) {
+          notie.alert({ type: data.succ, text: data, time: 2 });
+
+        })
+
+
+    });
+
+
+}
+
+
+
+			]]></add>
+
+        </operation>
+
+
+        <operation>
+            <search position="before" index="1"><![CDATA[<script type="text/javascript"><!--]]></search>
+
+
+            <add><![CDATA[
+
+
+                       <script  src="./view/javascript/bootBox/bootbox.min.js"></script>
+			]]></add>
+
+        </operation>
+
+
+    </file>
+
+
+    <file name="admin/controller/catalog/product.php">
+        <operation>
+            <search position="before" index="1"><![CDATA[public function add() {]]></search>
+
+            <add><![CDATA[
+
+
+                    public function itemsDisabled() {
+
+                        $product_id =(int) $this->request->post['id'];
+			            $this->db->query("UPDATE " . DB_PREFIX . "product SET status = '0' WHERE product_id = '" . (int)$product_id . "'");
+                        echo json_encode(array('succ'=>$this->db->countAffected()));
+                        $this->cache->delete('product');
+
+                     }
+
+
+                      public function itemsEnable() {
+
+                        $product_id =(int) $this->request->post['id'];
+			            $this->db->query("UPDATE " . DB_PREFIX . "product SET status = '1' WHERE product_id = '" . (int)$product_id . "'");
+                        echo json_encode(array('succ'=>$this->db->countAffected()));
+                        $this->cache->delete('product');
+
+                     }
+
+
+
+
+
+			]]></add>
+
+        </operation>
+    </file>
+
+
+</modification>
