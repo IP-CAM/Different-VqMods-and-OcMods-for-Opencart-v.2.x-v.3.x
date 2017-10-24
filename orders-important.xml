@@ -1,0 +1,432 @@
+<modification>
+
+    <id>importantOrder</id>
+    <version>1.1.0</version>
+    <vqmver>2.1.1</vqmver>
+    <author>PHP0</author>
+
+    <file name="admin/view/template/sale/order_list_total_filter.tpl">
+
+
+        <operation>
+            <search position="before" index="1"><![CDATA[<div id="active-filters">]]></search>
+
+
+            <add><![CDATA[
+
+             <div  class="table-responsive" id="wrapper">
+                <ul id="Divimportant" class="list-group"><ul/>
+             </div>
+
+			]]></add>
+
+        </operation>
+
+        <operation>
+            <search position="before" index="1">
+                <![CDATA[<li><a href="<?php echo $add; ?>" data-toggle="tooltip" title="<?php echo $button_add; ?>" class="btn btn-primary"><i class="fa fa-plus"></i></a></li>]]></search>
+
+
+            <add><![CDATA[
+
+            <button onclick="getImportant();" id="bt-8" type="button" class="btn btn-info">هام</button>
+			]]></add>
+
+        </operation>
+
+
+        <operation>
+            <search position="replace" index="1"><![CDATA[$(document).ready(function() {]]></search>
+
+
+            <add><![CDATA[
+
+            <script type="text/javascript">
+
+
+
+                  function seImportant(id) {
+
+                    $.ajax({
+                        url: 'index.php?route=sale/order/setImportant&token=<?php echo $token; ?>&order_id=' + id,
+                        dataType: 'json',
+                        success: function (json) {
+                         notie.alert(3,json.succ, 2.5);
+                         $("#Divimportant").empty();
+                         getImportant();
+
+                         $('#bt-'+id).hide( "slow");
+
+                        }
+                    });
+
+
+                }
+
+                function setIsCall(id,s,c) {
+
+                    $.ajax({
+                        url: 'index.php?route=sale/order/setIsCall&token=<?php echo $token; ?>&order_id=' + id+'&isCall='+s,
+                        dataType: 'json',
+                        success: function (json) {
+                        var msg='تم بنجاح';
+                        var s=1;
+                        if(json.succ!=1){
+                        msg='اعد المحاولة';
+                        s=3;
+                        }
+
+
+
+                         notie.alert({ type: 'success', text: msg, time: 2 });
+
+                         $.post( 'index.php?route=sale/order/addMyOrderHistory&token=<?php echo $token; ?>&order_id=' + id + '&comment='+c, function( data ) {
+                             
+                              notie.alert({ type: 'success', text: data, time: 2 });
+                          });
+
+                        }
+                    });
+
+
+                }
+
+
+
+                 function getImportant() {
+
+
+                      $('#Divimportant').waitMe({effect: 'img'});
+
+                      $('#Divimportant').empty();
+                      $.ajax({
+                                    type: 'GET',
+                                    dataType: "json",
+                                    url: 'index.php?route=sale/order/getImportant&token=<?php echo $token; ?>',
+                                    success: function (data) {
+
+
+
+                                        $('#ListCustemerTpl').tmpl(data).appendTo('#Divimportant');
+                                        notie.alert(1, 'تم تحميل قائمة العملاء المهمين', 2.5);
+
+                                    }
+                                });
+
+
+
+
+                 }
+
+
+
+            $(document).ready(function() {
+
+
+
+
+
+
+
+
+
+			]]></add>
+
+        </operation>
+
+
+        <operation>
+            <search position="replace" index="1"><![CDATA[<script type="text/javascript"><!--]]></search>
+
+
+            <add><![CDATA[
+
+
+
+
+                    <script id="ListCustemerTpl" type="x-jquery-tmpl">
+
+                    <li class="list-group-item">
+                    <a   href="index.php?route=sale/order/info&token=<?php echo $token; ?>&order_id=${order_id}" class="showRight2"><span> ${lastname} - ${name}<small>${firstname}</small></span></a>
+                   <div class="pull-right"><button  onclick="seImportant('${order_id}');"   type="button" class="btn btn-info text-left">الغاء</button></div>
+                   </li>
+                    </script>
+
+
+
+			]]></add>
+
+        </operation>
+
+
+        <operation>
+            <search position="after" index="1">
+                <![CDATA[<a href="<?php echo $order['delete']; ?>" id="button-delete<?php echo $order['order_id']; ?>" data-toggle="tooltip" title="<?php echo $button_delete; ?>" class="btn btn-danger"><i class="fa fa-trash-o"></i></a>]]></search>
+
+
+            <add><![CDATA[
+
+                    <?php if($order['isImportant']==0){ ?>
+                   <button  onclick="seImportant('<?php echo $order['order_id']; ?>');" id='bt-<?php echo $order['order_id']; ?>'  type="button" class="btn btn-info">هام</button>
+
+                    <?php } ?>
+
+			]]></add>
+
+        </operation>
+
+
+        <operation>
+            <search position="after" index="1">
+                <![CDATA[<input type="checkbox" name="selected[]" value="<?php echo $order['order_id']; ?>" />]]></search>
+
+
+            <add><![CDATA[
+
+                <?php
+
+                $statUS = array('1'=>'text-success','2'=>'text-warning','3'=>'text-danger');
+
+                ?>
+
+
+            <div class="dropup">
+
+                <i type="button" id="dropdownMenu2" data-toggle="dropdown"  aria-haspopup="true" aria-expanded="false" class="fa btn fa-phone dropdown-toggle <?php echo $statUS[$order['isCall']]; ?> " aria-hidden="true"></i>
+
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                <li class="fa btn fa-phone dropdown-toggle <?php echo $statUS['1']; ?> " ><a href="javascript:setIsCall('<?php echo $order['order_id']; ?>',1,'تم الاتصال به');">1- تم الاتصال به</a></li>
+                <li class="fa btn fa-phone dropdown-toggle <?php echo $statUS['2']; ?> "><a href="javascript:setIsCall('<?php echo $order['order_id']; ?>',2,'لم يرد');">2- لم يرد</a></li>
+                <li class="fa btn fa-phone dropdown-toggle <?php echo $statUS['3']; ?> "><a href="javascript:setIsCall('<?php echo $order['order_id']; ?>',3,'جواله مقفل');">3- جواله مقفل</a></li>
+              </ul>
+            </div>
+
+
+			]]></add>
+
+        </operation>
+
+
+    </file>
+
+
+    <file name="admin/controller/sale/order.php">
+        <operation>
+            <search position="before" index="1"><![CDATA[public function getForm() {]]></search>
+
+            <add><![CDATA[
+
+            public function getImportant() {
+
+                $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order WHERE isImportant = 1");
+                echo json_encode($query->rows);
+
+             }
+
+         public function setImportant() {
+
+                $order_id = $this->request->get['order_id'];
+
+                $sql="UPDATE `". DB_PREFIX ."order` SET `isImportant` =  !`isImportant`  WHERE `" . DB_PREFIX . "order`.`order_id` = '" . (int)$order_id . "'";
+
+                $query = $this->db->query($sql);
+
+                echo json_encode(array('succ'=>$query));
+
+         }
+
+         public function setIsCall() {
+
+                $order_id = $this->request->get['order_id'];
+                $isCall = $this->request->get['isCall'];
+
+                $sql="UPDATE `". DB_PREFIX ."order` SET `isCall` = '.$isCall.'  WHERE `" . DB_PREFIX . "order`.`order_id` = '" . (int)$order_id . "'";
+
+                $query = $this->db->query($sql);
+
+                echo json_encode(array('succ'=>$query));
+
+         }
+
+         public function addMyOrderHistory() {
+
+
+        $order_id = $this->request->get['order_id'];
+        $comment = $this->request->get['comment'];
+        $this->load->model('sale/order');
+        $query = $this->db->query("SELECT order_status_id FROM " . DB_PREFIX . "order WHERE order_id =".(int)$order_id);
+		$val = $order_status_id = $query->row['order_status_id'];
+
+		$this->db->query("INSERT INTO " . DB_PREFIX . "order_history SET order_id = '" . (int)$order_id . "', order_status_id = '" . (int)$order_status_id . "', notify = '" . (isset($data['notify']) ? (int)$data['notify'] : 0) . "', comment = '" . $this->db->escape(strip_tags($comment)) . "', date_added = NOW()");
+
+
+        echo json_encode(array('succ'=>$val));
+
+
+                     }
+
+
+
+			]]></add>
+
+        </operation>
+
+        <operation>
+            <search position="after" index="1"><![CDATA[$fields = array(]]></search>
+
+            <add><![CDATA[
+
+                'isImportant' => array(
+                  'table' => 'order',
+                  'alias' => 'o',
+                  'type' => 'text',
+                ),
+                'isCall' => array(
+                  'table' => 'order',
+                  'alias' => 'o',
+                  'type' => 'text',
+                ),
+
+			]]></add>
+
+        </operation>
+
+
+    </file>
+    <file name="admin/view/template/sale/order_info.tpl">
+        <operation>
+            <search position="replece" index="1"><![CDATA[<i class="fa fa-reply"></i></a>]]></search>
+
+            <add><![CDATA[
+            <i class="fa fa-reply"></i></a>
+            <a href="javascript:seImportant('<?php echo $order_id; ?>')" target="_blank" data-toggle="tooltip" title="" class="btn btn-info" data-original-title="هام"><i class="fa "></i>هام</a>
+
+
+			]]></add>
+
+        </operation>
+
+
+    </file>
+
+
+    <file name="admin/view/template/sale/order_info.tpl">
+        <operation>
+            <search position="before" index="1"><![CDATA[<script type="text/javascript"><!--]]></search>
+
+
+            <add><![CDATA[
+
+         <script type="text/javascript">
+
+
+
+                  function seImportant(id) {
+
+                    $.ajax({
+                        url: 'index.php?route=sale/order/setImportant&token=<?php echo $token; ?>&order_id=' + id,
+                        dataType: 'json',
+                        success: function (json) {
+                         notie.alert(3,json.succ, 2.5);
+                         $("#Divimportant").empty();
+                         getImportant();
+
+                         $('#bt-'+id).hide( "slow");
+
+
+
+                        }
+                    });
+
+
+                }
+
+                function setIsCall(id,s) {
+
+
+                    $.ajax({
+                        url: 'index.php?route=sale/order/setIsCall&token=<?php echo $token; ?>&order_id=' + id+'&isCall='+s,
+                        dataType: 'json',
+                        success: function (json) {
+                        var msg='تم بنجاح';
+                        var s=1;
+                        if(json.succ!=1){
+                        msg='اعد المحاولة';
+                        s=3;
+                        }
+
+                         notie.alert(s,msg, 2.5);
+
+                        }
+                    });
+
+
+                }
+
+
+
+                 function getImportant() {
+
+
+                      $('#Divimportant').waitMe({effect: 'img'});
+
+                      $('#Divimportant').empty();
+                      $.ajax({
+                                    type: 'GET',
+                                    dataType: "json",
+                                    url: 'index.php?route=sale/order/getImportant&token=<?php echo $token; ?>',
+                                    success: function (data) {
+
+
+
+                                        $('#ListCustemerTpl').tmpl(data).appendTo('#Divimportant');
+                                        notie.alert(1, 'تم تحميل قائمة العملاء المهمين', 2.5);
+
+                                    }
+                                });
+
+
+
+
+                 }
+
+
+                </script>
+
+
+
+
+
+
+
+
+                       <link rel="stylesheet" type="text/css" href="./view/javascript/notie/notie.css">
+                       <script  src="./view/javascript/jqueryTmpl/jquery.tmpl.min.js"></script>
+                       <script  src="./view/javascript/notie/notie.min.js"></script>
+                       <script  src="./view/javascript/waitMe/waitMe.min.js"></script>
+
+
+                    <script id="ListCustemerTpl" type="x-jquery-tmpl">
+
+                    <li class="list-group-item">
+                    <a   href="index.php?route=sale/order/info&token=<?php echo $token; ?>&order_id=${order_id}" class="showRight2"><span> ${lastname} - ${name}<small>${firstname}</small></span></a>
+                   <div class="pull-right"><button  onclick="seImportant('${order_id}');"   type="button" class="btn btn-info text-left">الغاء</button></div>
+                   </li>
+                    </script>
+
+
+
+
+
+
+
+
+			]]></add>
+
+        </operation>
+
+
+    </file>
+
+
+</modification>
