@@ -14,14 +14,14 @@
             <add><![CDATA[
 
          <div class="btn-group">
-          <button type="button" onclick="itemsDisabled();" class="btn btn-warning">Disabled</button>
+          <button type="button" onclick="itemsDisabled();" class="btn btn-warning">ايقاف المنتجات</button>
           <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span class="caret"></span>
             <span class="sr-only">Toggle Dropdown</span>
           </button>
           <ul class="dropdown-menu">
-            <li><a href="javascript:itemsDisabled();">itemsDisabled</a></li>
-            <li><a href="javascript:itemsEnable();">itemsEnable</a></li>
+            <li><a href="javascript:itemsDisabled();">ايقاف المنتجات</a></li>
+            <li><a href="javascript:itemsEnable();">تفعيل المنتجات</a></li>
           </ul>
         </div>
 
@@ -115,7 +115,16 @@ function progrs() {
 // حذف كافة الخصومات السابقة
 function itemsDisabled() {
 
-    var pircent=$("#percent:checked").is(":checked");
+
+
+var dialog = bootbox.dialog({
+    title: 'نتائج التفعيل',
+    message: '<p></p>'
+});
+dialog.init(function(){
+
+
+  var pircent=$("#percent:checked").is(":checked");
 
 
 
@@ -124,10 +133,18 @@ function itemsDisabled() {
         $.post("index.php?route=catalog/product/itemsDisabled&token=<?php echo $token; ?>", {
             id: $(this).val()
         }).done(function (data) {
-        notie.alert({ type: data.succ, text: data, time: 2 });
-        })
 
+        var obj = jQuery.parseJSON(data);
+        var succ = ['alert alert-danger','alert alert-success'];
+        dialog.find('.bootbox-body').prepend('<p class="'+succ[obj.succ]+'">'+obj.id+'<p><br/>');
+
+        })
     });
+
+
+
+});
+
 
 
 }
@@ -137,7 +154,14 @@ function itemsDisabled() {
 // حذف كافة الخصومات السابقة
 function itemsEnable() {
 
-    var pircent=$("#percent:checked").is(":checked");
+var dialog = bootbox.dialog({
+    title: 'نتائج التفعيل',
+    message: '<p></p>'
+});
+dialog.init(function(){
+
+
+  var pircent=$("#percent:checked").is(":checked");
 
 
 
@@ -146,12 +170,18 @@ function itemsEnable() {
         $.post("index.php?route=catalog/product/itemsEnable&token=<?php echo $token; ?>", {
             id: $(this).val()
         }).done(function (data) {
-          notie.alert({ type: data.succ, text: data, time: 2 });
+
+        var obj = jQuery.parseJSON(data);
+        var succ = ['alert alert-danger','alert alert-success'];
+        dialog.find('.bootbox-body').prepend('<p class="'+succ[obj.succ]+'">'+obj.id+'<p><br/>');
 
         })
-
-
     });
+
+
+
+});
+
 
 
 }
@@ -190,7 +220,7 @@ function itemsEnable() {
 
                         $product_id =(int) $this->request->post['id'];
 			            $this->db->query("UPDATE " . DB_PREFIX . "product SET status = '0' WHERE product_id = '" . (int)$product_id . "'");
-                        echo json_encode(array('succ'=>$this->db->countAffected()));
+                        echo json_encode(array('succ'=>$this->db->countAffected(),'id'=>$product_id));
                         $this->cache->delete('product');
 
                      }
@@ -200,7 +230,7 @@ function itemsEnable() {
 
                         $product_id =(int) $this->request->post['id'];
 			            $this->db->query("UPDATE " . DB_PREFIX . "product SET status = '1' WHERE product_id = '" . (int)$product_id . "'");
-                        echo json_encode(array('succ'=>$this->db->countAffected()));
+                        echo json_encode(array('succ'=>$this->db->countAffected(),'id'=>$product_id));
                         $this->cache->delete('product');
 
                      }
