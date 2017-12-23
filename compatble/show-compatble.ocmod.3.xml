@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <name>CompatibleDevices</name>
+    <code>CompatibleDevices</code>
+    <id>Compatible Devices</id>
+    <version>1.2.0</version>
+    <vqmver>2.5.1</vqmver>
+    <author>Basheir Hassan</author>
+
+    <file path="catalog/view/theme/*/template/product/product.twig">
+        <operation>
+            <search><![CDATA[
+           			{% if date_end and journal2.settings.get('show_countdown_product_page', 'on') == 'on' %}
+				]]></search>
+            <add position="before"><![CDATA[
+
+              {% if compDatas %}
+              <div class="social share-this">
+              <div class="p-brand">توافق مع منتجات</div>
+              <div class="social-loaded">
+
+                 {% for key,val in compDatas %}
+                 <li class="p-brand"> {{val.deviceName}}</li>
+                {% endfor %}
+
+              </div>
+            </div>
+            {% endif %}
+
+				]]></add>
+        </operation>
+    </file>
+
+
+    <file path="catalog/controller/product/product.php">
+
+        <operation>
+            <search><![CDATA[
+              			$data['points'] = $product_info['points'];
+				]]></search>
+            <add position="after"><![CDATA[
+			$compDatas = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_compatible comp WHERE (comp.product_id = " . $product_info['product_id'] . ")");
+
+		if(count($compDatas->rows)>0){
+			$AllIDs = json_decode($compDatas->row['id_devices'],true);
+
+			$IntArray = array_map('intval', $AllIDs);
+			$AllIDsImplod = implode(",", $IntArray);
+
+
+
+			$IDDevices = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_compatible_devices comp WHERE (comp.id_devices IN (" . $AllIDsImplod . "))");
+			$data['compDatas']= $IDDevices->rows;
+			//print_r($IDDevices->rows);
+
+		}
+		else {
+		$data['compDatas']= null;
+		}
+
+
+				]]></add>
+        </operation>
+
+
+    </file>
+
+
+
+<file path="admin/view/template/catalog/product_form.twig">
+
+        <operation>
+            <search><![CDATA[
+              			<li><a href="#tab-design" data-toggle="tab">{{ tab_design }}</a></li>
+				]]></search>
+            <add position="after"><![CDATA[
+
+            <li><a href="#compatible_devices" data-toggle="tab">متوافق مع اجهزة</a></li>
+				]]></add>
+        </operation>
+
+
+    <operation>
+        <search><![CDATA[
+              			<div class="tab-pane" id="tab-design">
+				]]></search>
+        <add position="before"><![CDATA[
+
+       <div class="tab-pane" id="compatible_devices">
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                  <thead>
+
+                  </thead>
+                  <tbody>
+                  <tr>
+                           <div class="input-group">
+			<input type="text" name="compatble" value="" placeholder="متوافق مع" id="input-compatble" class="form-control" autocomplete="off">
+			  <span onclick="addItemsCompatble();"  class="input-group-addon btn btn-primary">حفظ</span>
+			</div>
+
+
+
+			<div id="product-compatble" class="well well-sm" style="height: 150px; overflow: auto;">
+
+
+                {% for key,val in product_compatble_field %}
+
+                  <div id='product-compatble{{val.id_devices}}'><i class='fa fa-minus-circle'></i>{{val.deviceName}}<input type='hidden' name='product_compatble[]' value='{{val.id_devices}}' /></div>
+                {% endfor %}
+
+
+           </div>
+                  </div>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+
+
+
+]]></add>
+    </operation>
+
+
+    <operation>
+        <search><![CDATA[$('input[name=\'related\']').autocomplete({]]></search>
+        <add position="before"><![CDATA[
+		     // autocompleteCompatble
+      $('input[name=\'compatble\']').autocomplete({
+          'source': function(request, response) {
+              $.ajax({
+                  url: 'index.php?route=catalog/product/autocompleteCompatble&user_token={{user_token}}&filter_name=' +  encodeURIComponent(request),
+                  dataType: 'json',
+                  success: function(json) {
+                      response($.map(json, function(item) {
+                          return {
+                              label: item['deviceName'],
+                              value: item['id_devices']
+                          }
+                      }));
+                  }
+              });
+          },
+          'select': function(item) {
+              $('input[name=\'compatble\']').val('');
+
+              $('#product-compatble' + item['value']).remove();
+
+              $('#product-compatble').append('<div id="product-compatble' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="product_compatble[]" value="' + item['value'] + '" /></div>');
+          }
+      });
+
+
+
+
+     function addItemsCompatble() {
+			var val = $('input[name=\'compatble\']').val();
+
+			if(!val){
+			alert("فارغ ")
+			return ;
+			}
+
+			$.getJSON( 'index.php?route=catalog/product/addItemsCompatble&user_token={{user_token}}&deviceName='+val, function( data ) {
+			$('#product-compatble').append('<div id="product-compatble' + data[0].deviceName + '"><i class="fa fa-minus-circle"></i> ' + data[0].deviceName + '<input type="hidden" name="product_compatble[]" value="' + data[0].id_devices + '" /></div>');
+
+			//  alert( "Load was performed." );
+
+
+			});
+
+
+    }
+    	$('#product-compatble').delegate('.fa-minus-circle', 'click', function() {
+				$(this).parent().remove();
+			});
+
+
+
+			]]></add>
+    </operation>
+
+    </file>
+
+    <file path="admin/controller/catalog/product.php">
+
+
+       <operation>
+            <search><![CDATA[
+              				protected function validateForm() {
+				]]></search>
+            <add position="before"><![CDATA[
+
+//Compatble
+
+	public function autocompleteCompatble() {
+		$json = array();
+ 		$name = $this->request->get['filter_name'];
+        $compDatas = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_compatible_devices" . " WHERE deviceName LIKE '%".$name."%'");
+        $json = $compDatas->rows;
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+
+
+
+
+    public function addItemsCompatble() {
+
+        $json = array();
+
+        $name = $this->request->get['deviceName'];
+        $compDatas = $this->db->query("Insert into " . DB_PREFIX . "product_compatible_devices" . "( `deviceName`) VALUES ('$name')");
+       // print_r($compDatas);
+
+
+        $ID = $this->db->getLastId();
+
+
+        $getLastInsert = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_compatible_devices" ." WHERE `id_devices` = ".$ID);
+        $json = $getLastInsert->rows;
+
+        $this->response->addHeader('Content-Type: application/json');
+        $this->response->setOutput(json_encode($json));
+
+    }
+
+				]]></add>
+        </operation>
+
+
+        <operation>
+            <search><![CDATA[if (isset($this->request->post['points'])) {]]></search>
+            <add position="before"><![CDATA[
+
+
+if(!isset($this->request->get['product_id'])){
+$this->request->get['product_id']= 0;
+}
+
+
+			$data['product_compatble_field'] = $this->model_catalog_product->getProductCompatble($this->request->get['product_id']);
+			//print_r($data['product_compatble_field']);
+
+]]></add>
+        </operation>
+
+
+    </file>
+
+
+
+
+
+    <file path="admin/model/catalog/product.php">
+
+
+        <operation>
+            <search><![CDATA[
+              				$this->cache->delete('product');
+				]]></search>
+            <add position="before"><![CDATA[
+
+  		if ($data['product_compatble']) {
+
+			$this->db->query("DELETE FROM " . DB_PREFIX . "product_compatible WHERE product_id = '" . (int)$product_id . "'");
+
+
+			$IntArray = array_map('intval', $data['product_compatble']);
+
+		    $json=json_encode($IntArray);
+
+
+
+            $this->db->query("INSERT INTO " . DB_PREFIX . "product_compatible SET product_id = '" . (int)$product_id . "', id_devices = '" . $json . "'");
+        }
+
+				]]></add>
+        </operation>
+
+
+        <operation>
+            <search><![CDATA[public function getProductOptions($product_id) {]]></search>
+            <add position="before"><![CDATA[public function getProductCompatble($product_id) {
+			      $compDatas = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_compatible comp WHERE (comp.product_id = " . $product_id . ")");
+
+		if(count($compDatas->rows)>0){
+        $AllIDs = json_decode($compDatas->row['id_devices'],true);
+
+
+        $IntArray = array_map('intval', $AllIDs);
+        $AllIDsImplod = implode(",", $IntArray);
+        $IDDevices = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_compatible_devices comp WHERE (comp.id_devices IN (" . $AllIDsImplod . "))");
+        $product_compatble_data = $IDDevices->rows;
+      // print_r($IDDevices->rows);
+		return $product_compatble_data;
+		}
+
+        return null;
+				}]]></add>
+        </operation>
+
+
+    </file>
+
+
+
+
+
+
+
+
+</modification>
