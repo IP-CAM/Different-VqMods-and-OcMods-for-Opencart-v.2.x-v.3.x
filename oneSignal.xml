@@ -1,7 +1,7 @@
 <modification>
 
     <id><![CDATA[setPlayerID]]></id>
-    <version><![CDATA[1.0.0]]></version>
+    <version><![CDATA[1.1.0]]></version>
     <author><![CDATA[php0@hotmail.com]]></author>
     <vqmver><![CDATA[2.5.1]]></vqmver>
 
@@ -15,7 +15,7 @@
 
         <operation>
 
-       <search position="before"><![CDATA[    public function listOrders()]]></search>
+       <search position="before"><![CDATA[    public function reorder($order_id, $order_product_id)]]></search>
 
 
             <add><![CDATA[
@@ -75,7 +75,7 @@
     </file>
 
 
-    <file name="admin/view/template/sale/order_info.tpl">
+    <file name="admin/view/template/sale/order_info.twig">
         <!--
         The search pattern is a portion of the line of code.
         This is to be friendly with an other module (Delete Order History v2 by The Krotek) which
@@ -89,9 +89,21 @@
 
 
         <div class="form-group">
-        <a href="javascript:$.post( './oneSignal/send.php',{message:$('#input-order-status option:selected').text(), playerID: $('#playerID').val() }).done(function( data ) { alert( data );});" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="ارسال تنبيه"><i class="fa fa-pencil"></i></a>
+        <a href="javascript:$.post( './oneSignal/send.php',{message:$('#input-order-status option:selected').text() + $('#date_products').val() , playerID: $('#playerID').val() }).done(function( data ) { alert( data );});" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="ارسال تنبيه"><i class="fa fa-pencil"></i></a>
                   <div class="col-sm-10">
-        <input id="playerID" type="text" name="playerID" value="<?php echo $playerID; ?>" class="form-control" placeholder="playerID">
+        <input id="playerID" type="text" name="playerID" value="{{playerID}}" class="form-control" placeholder="playerID">
+
+
+
+
+
+        <textarea  id="date_products" rows="4" cols="50">
+          {% for product in products %}
+           {{ product.name }}
+          {% endfor %}
+
+        </textarea>
+
                   </div>
                 </div>
 
@@ -122,6 +134,8 @@
             <add><![CDATA[
 
            'playerID'                => $order_query->row['playerID'],
+           'date_products'           => $this->getOrderProducts($order_query->row['order_id']),
+
 
             ]]></add>
 
@@ -146,6 +160,15 @@
             <add><![CDATA[
 
           $data['playerID'] =  $order_info['playerID'];
+
+
+           //$this->load->model('sale/order');
+          // $products = $this->model_sale_order->getOrderProducts($order_info['order_id']);
+           //$data['date_products']  =  implode(" \n ",array_column($products,'name')) ;
+
+
+         //   print_r(implode(" \n ",array_column($products,'name')));
+
 
             ]]></add>
 
